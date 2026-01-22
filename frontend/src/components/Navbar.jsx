@@ -1,4 +1,4 @@
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { FiLogOut, FiUser, FiBook, FiMenu, FiX } from 'react-icons/fi';
 import { useState, useEffect } from 'react';
@@ -8,6 +8,10 @@ const Navbar = () => {
   const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const location = useLocation();
+
+  // Hide navbar on login and register pages
+  const isAuthPage = location.pathname === '/login' || location.pathname === '/register';
 
   useEffect(() => {
     const handleScroll = () => {
@@ -17,6 +21,8 @@ const Navbar = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  if (isAuthPage) return null;
+
   const handleLogout = () => {
     logout();
     setIsOpen(false);
@@ -24,8 +30,8 @@ const Navbar = () => {
   };
 
   return (
-    <nav className={`fixed top-0 left-0 right-0 z-50 px-4 transition-all duration-300 ${scrolled ? 'py-3' : 'py-5'}`}>
-      <div className={`max-w-7xl mx-auto rounded-2xl transition-all duration-300 ${scrolled ? 'glass bg-white/80' : 'bg-transparent'}`}>
+    <nav className={`fixed top-0 left-0 right-0 z-50 px-2 sm:px-4 transition-all duration-300 ${scrolled || isOpen ? 'py-2' : 'py-5'}`}>
+      <div className={`max-w-7xl mx-auto rounded-3xl transition-all duration-300 ${scrolled || isOpen ? 'glass bg-white/95 shadow-xl border-surface-200/50' : 'bg-transparent'}`}>
         <div className="px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             {/* Logo */}
@@ -99,47 +105,47 @@ const Navbar = () => {
         </div>
 
         {/* Mobile Navigation */}
-        <div className={`md:hidden transition-all duration-300 overflow-hidden ${isOpen ? 'max-h-96' : 'max-h-0'}`}>
-          <div className="px-4 pt-2 pb-6 space-y-2 border-t border-surface-100 mt-2">
-            <Link to="/courses" className="block px-4 py-3 text-surface-600 font-semibold hover:bg-surface-50 rounded-xl" onClick={() => setIsOpen(false)}>
+        <div className={`md:hidden transition-all duration-300 ease-in-out overflow-hidden ${isOpen ? 'max-h-[80vh] opacity-100' : 'max-h-0 opacity-0'}`}>
+          <div className="px-4 pt-2 pb-8 space-y-1 mt-2">
+            <Link to="/courses" className="block px-4 py-3.5 text-surface-700 font-bold hover:bg-primary-50 hover:text-primary-600 rounded-2xl transition-all" onClick={() => setIsOpen(false)}>
               Courses
             </Link>
             {isAuthenticated ? (
               <>
                 {isInstructor && (
-                  <Link to="/instructor/dashboard" className="block px-4 py-3 text-surface-600 font-semibold hover:bg-surface-50 rounded-xl" onClick={() => setIsOpen(false)}>
+                  <Link to="/instructor/dashboard" className="block px-4 py-3.5 text-surface-700 font-bold hover:bg-primary-50 hover:text-primary-600 rounded-2xl transition-all" onClick={() => setIsOpen(false)}>
                     Instructor Dashboard
                   </Link>
                 )}
                 {isStudent && (
-                  <Link to="/student/dashboard" className="block px-4 py-3 text-surface-600 font-semibold hover:bg-surface-50 rounded-xl" onClick={() => setIsOpen(false)}>
+                  <Link to="/student/dashboard" className="block px-4 py-3.5 text-surface-700 font-bold hover:bg-primary-50 hover:text-primary-600 rounded-2xl transition-all" onClick={() => setIsOpen(false)}>
                     My Learning
                   </Link>
                 )}
-                <div className="px-4 py-3 border-t border-surface-100 mt-2">
-                  <div className="flex items-center space-x-3 mb-4">
-                    <img src={`https://i.pravatar.cc/150?u=${user?.email}`} className="w-10 h-10 rounded-lg" alt="profile" />
+                <div className="pt-4 border-t border-surface-100 mt-4">
+                  <div className="flex items-center space-x-4 px-4 mb-6 p-3 bg-surface-50 rounded-2xl">
+                    <img src={`https://i.pravatar.cc/150?u=${user?.email}`} className="w-12 h-12 rounded-xl shadow-sm border-2 border-white" alt="profile" />
                     <div>
-                      <p className="font-bold text-surface-900">{user?.name}</p>
-                      <p className="text-xs text-primary-600 font-bold uppercase">{user?.role}</p>
+                      <p className="font-bold text-surface-900 leading-none mb-1">{user?.name}</p>
+                      <p className="text-[10px] text-primary-600 font-black uppercase tracking-wider">{user?.role}</p>
                     </div>
                   </div>
                   <button
                     onClick={handleLogout}
-                    className="w-full py-3 bg-red-50 text-red-600 font-bold rounded-xl flex items-center justify-center space-x-2"
+                    className="w-full py-4 bg-red-50 text-red-600 font-bold rounded-2xl flex items-center justify-center space-x-2 active:scale-[0.98] transition-transform"
                   >
-                    <FiLogOut />
-                    <span>Logout</span>
+                    <FiLogOut className="text-xl" />
+                    <span>Logout Account</span>
                   </button>
                 </div>
               </>
             ) : (
-              <div className="pt-4 space-y-4">
-                <Link to="/login" className="block px-4 py-3 text-center text-surface-600 font-semibold border-2 border-surface-100 rounded-xl" onClick={() => setIsOpen(false)}>
-                  Login
+              <div className="pt-6 space-y-3 px-2">
+                <Link to="/login" className="block w-full py-4 text-center text-surface-700 font-bold border-2 border-surface-200 rounded-2xl hover:bg-surface-50 transition-all" onClick={() => setIsOpen(false)}>
+                  Sign In
                 </Link>
-                <Link to="/register" className="block px-4 py-3 text-center bg-primary-600 text-white font-bold rounded-xl" onClick={() => setIsOpen(false)}>
-                  Get Started
+                <Link to="/register" className="block w-full py-4 text-center bg-primary-600 text-white font-bold rounded-2xl shadow-lg shadow-primary-200 hover:bg-primary-700 active:scale-[0.98] transition-all" onClick={() => setIsOpen(false)}>
+                  Create Free Account
                 </Link>
               </div>
             )}

@@ -48,7 +48,7 @@ const Home = () => {
             <div className="relative animate-fade-in hidden lg:block">
               <div className="relative rounded-3xl overflow-hidden glass p-4 aspect-square max-w-lg mx-auto transform rotate-3 hover:rotate-0 transition-transform duration-500">
                 <img
-                  src="/artifacts/hero_learning_illustration.png"
+                  src="/hero_learning_illustration.png"
                   alt="Learning Illustration"
                   className="w-full h-full object-cover rounded-2xl"
                 />
